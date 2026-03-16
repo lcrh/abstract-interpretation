@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abstract Interpretation — A Hierarchy of Abstractions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="header">
+  <p class="site-title"><a href="index.html">An Abstract Interpretation Perspective on Logical Deduction</a></p>
+  <nav id="nav">
+    <a href="index.html">1</a>
+    <a href="step2.html">2</a>
+    <a href="step3.html">3</a>
+    <a href="step4.html">4</a>
+    <a href="step5.html">5</a>
+    <a href="step6.html" class="nav-current">6</a>
+    <a href="step7.html">7</a>
+  </nav>
+  </header>
+
+  <main>
+    <section class="step">
+      <h1>A Hierarchy of Abstractions</h1>
+
+      <p>
+        So far we've seen two lattices: the concrete powerset lattice and
+        the abstract partial-assignment lattice. But there's nothing special
+        about having exactly two — we can stack multiple levels of
+        abstraction, each connected by a Galois connection.
+      </p>
+
+      <p>
+        For Sudoku, three natural levels emerge:
+      </p>
+
+      <div class="hierarchy-with-label">
+      <div class="hierarchy">
+        <div class="hierarchy-node">𝒫(Loc → N)</div>
+        <div class="hierarchy-arrow">
+          <svg class="galois-svg" viewBox="0 0 60 44" width="60" height="44">
+            <line x1="50" y1="10" x2="10" y2="10" stroke="currentColor" stroke-width="1"/>
+            <path d="M10,10 L16,5" fill="none" stroke="currentColor" stroke-width="1"/>
+            <line x1="10" y1="34" x2="50" y2="34" stroke="currentColor" stroke-width="1"/>
+            <path d="M50,34 L44,39" fill="none" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="hierarchy-node">Loc → 𝒫(N)</div>
+        <div class="hierarchy-arrow">
+          <svg class="galois-svg" viewBox="0 0 60 44" width="60" height="44">
+            <line x1="50" y1="10" x2="10" y2="10" stroke="currentColor" stroke-width="1"/>
+            <path d="M10,10 L16,5" fill="none" stroke="currentColor" stroke-width="1"/>
+            <line x1="10" y1="34" x2="50" y2="34" stroke="currentColor" stroke-width="1"/>
+            <path d="M50,34 L44,39" fill="none" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="hierarchy-node">Loc → (N ∪ {⊥, ⊤})</div>
+      </div>
+      <div class="hierarchy-side-label">
+        <span>least abstract</span>
+        <span class="hierarchy-side-arrow">↓</span>
+        <span>most abstract</span>
+      </div>
+      </div>
+
+      <p>
+        <strong>𝒫(Loc → N)</strong> is the powerset lattice from step 3 —
+        the most precise representation. It tracks every possible complete
+        grid, but storing and manipulating sets of grids is expensive.
+      </p>
+
+      <p>
+        <strong>Loc → 𝒫(N)</strong> tracks, for each cell, the set of
+        numbers still possible there. This is what Sudoku players do when
+        they "pencil in" candidates. What do we lose? <strong>Relational
+        information</strong>. We know which numbers are possible at each cell,
+        but not which combinations across cells are jointly possible.
+      </p>
+
+      <p>
+        <strong>Loc → (N ∪ {⊥, ⊤})</strong> is the partial-assignment
+        lattice from the beginning — for each cell, we either know its value
+        for certain, or we don't. This is the cheapest representation: we
+        only keep what we're sure about, discarding even the pencil marks.
+      </p>
+
+      <p>
+        Each pair of levels is connected by a Galois connection. Moving down
+        the hierarchy, we trade precision for efficiency.
+        Here are three grids and what each level of abstraction sees. Hover
+        over a grid thumbnail:
+      </p>
+
+      <div class="hierarchy-interactive">
+        <div class="hierarchy-col">
+          <div class="hierarchy-col-label">𝒫(Loc → N)</div>
+          <div id="hierarchy-thumbs" class="hierarchy-thumbs"></div>
+          <div id="hierarchy-concrete" class="hierarchy-preview"></div>
+        </div>
+        <div class="hierarchy-col">
+          <div class="hierarchy-col-label">Loc → 𝒫(N)</div>
+          <div class="hierarchy-spacer"></div>
+          <div id="hierarchy-pencil" class="hierarchy-preview"></div>
+        </div>
+        <div class="hierarchy-col">
+          <div class="hierarchy-col-label">Loc → (N ∪ {⊥, ⊤})</div>
+          <div class="hierarchy-spacer"></div>
+          <div id="hierarchy-abstract" class="hierarchy-preview"></div>
+        </div>
+      </div>
+
+      <script src="step6.js"></script>
+
+      <p>
+        The choice of which level to work at depends on how much precision
+        we need and how much computation we can afford.
+      </p>
+
+      <div class="key-insight">
+        Abstraction is not all-or-nothing. There is a hierarchy of
+        representations, each losing a specific kind of information.
+        Galois connections let us move between them soundly.
+      </div>
+    </section>
+
+    <div class="nav-footer">
+      <a href="step5.html">← Galois Connections</a>
+      <a href="step7.html">Deduction →</a>
+    </div>
+  </main>
+</body>
+</html>

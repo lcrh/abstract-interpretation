@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abstract Interpretation — Galois Connections</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="header">
+  <p class="site-title"><a href="index.html">An Abstract Interpretation Perspective on Logical Deduction</a></p>
+  <nav id="nav">
+    <a href="index.html">1</a>
+    <a href="step2.html">2</a>
+    <a href="step3.html">3</a>
+    <a href="step4.html">4</a>
+    <a href="step5.html" class="nav-current">5</a>
+    <a href="step6.html">6</a>
+    <a href="step7.html">7</a>
+  </nav>
+  </header>
+
+  <main>
+    <section class="step">
+      <h1>Galois Connections and Soundness</h1>
+
+      <p>
+        Our abstract lattice is lossy — but whenever we can determine something
+        using only the abstract representation, that conclusion also holds in
+        the precise powerset version. The abstraction may know less, but it
+        never lies. This "does not lie" quality is called
+        <strong>soundness</strong>.
+      </p>
+
+      <p>
+        For example: an algorithm spots the missing number on a row. If it
+        concludes "3 goes at (2,3)" in the abstract lattice, that's true in the
+        concrete lattice too.
+      </p>
+
+      <p>
+        Both α and γ must be <strong>monotone</strong> (order-preserving). Their
+        key properties:
+      </p>
+
+      <dl class="definition">
+        <dt>γ ∘ α is extensive</dt>
+        <dd>
+          γ(α(S)) ⊇ S — going abstract and back, we get at least what we
+          started with. We never lose a valid solution by abstracting.
+        </dd>
+        <dt>α ∘ γ is reductive</dt>
+        <dd>
+          α(γ(a)) ⊑ a — going concrete and back, we never end up with a worse
+          abstraction.
+        </dd>
+      </dl>
+
+      <p>
+        When α and γ are monotone and satisfy these two conditions, they form a
+        <strong>Galois connection</strong>. We denote this with the barbed
+        half-arrow notation from before:
+      </p>
+
+      <div class="galois-diagram">
+        <span class="galois-label">concrete</span>
+        <svg class="galois-svg" viewBox="0 0 100 54" width="100" height="54">
+          <line x1="90" y1="12" x2="10" y2="12" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M10,12 L18,6" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <text x="50" y="8" text-anchor="middle" font-size="11" font-style="italic" fill="currentColor">γ</text>
+          <line x1="10" y1="42" x2="90" y2="42" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M90,42 L82,48" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <text x="50" y="54" text-anchor="middle" font-size="11" font-style="italic" fill="currentColor">α</text>
+        </svg>
+        <span class="galois-label">abstract</span>
+      </div>
+
+      <p>
+        Notice how the notation captures exactly the two properties. Each
+        barbed arrow only points one way — start in the concrete, follow α to
+        the abstract, then γ back: tracing the arrows, we can only go up
+        (γ ∘ α is extensive). Start in the abstract, follow γ to the concrete,
+        then α back: we can only go down (α ∘ γ is reductive).
+      </p>
+
+      <p>
+        These are two sides of the same coin:
+        <strong>abstraction</strong> and <strong>representation</strong>.
+      </p>
+
+      <p>
+        The abstraction side (γ ∘ α extensive) says: we never lose a valid
+        solution by going abstract.
+      </p>
+
+      <p>
+        The representation side (α ∘ γ reductive) says: the abstract may carry
+        extraneous representational structure that a round-trip through the
+        concrete can eliminate.
+      </p>
+
+      <p>
+        To illustrate this, let's think of other ways of representing numbers
+        in a Sudoku. Suppose we describe each cell by two properties: its
+        <strong>parity</strong> (odd or even) and a <strong>range</strong>
+        [lo, hi]. Now watch what happens when we round-trip:
+      </p>
+
+      <div class="round-trip-svg-container">
+        <svg class="round-trip-svg" viewBox="0 0 400 280" width="400" height="280">
+          <!-- Start (abstract) - top right -->
+          <text x="310" y="18" text-anchor="middle" class="rt-label">START (ABSTRACT)</text>
+          <rect x="225" y="24" width="170" height="32" rx="4" class="rt-box"/>
+          <text x="310" y="45" text-anchor="middle" class="rt-text">even, [3, 6]</text>
+
+          <defs>
+            <marker id="rt-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M1,1 L7,4 L1,7" fill="none" stroke="var(--muted)" stroke-width="1.2"/>
+            </marker>
+          </defs>
+
+          <!-- γ arrow -->
+          <line x1="225" y1="56" x2="148" y2="127" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#rt-arrow)"/>
+          <text x="175" y="82" class="rt-arrow-label">γ</text>
+
+          <!-- Concretize - middle left -->
+          <text x="90" y="128" text-anchor="middle" class="rt-label">CONCRETIZE</text>
+          <rect x="35" y="134" width="110" height="32" rx="4" class="rt-box"/>
+          <text x="90" y="155" text-anchor="middle" class="rt-text">{4, 6}</text>
+
+          <!-- α arrow -->
+          <line x1="145" y1="166" x2="222" y2="237" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#rt-arrow)"/>
+          <text x="195" y="206" class="rt-arrow-label">α</text>
+
+          <!-- Re-abstract - bottom right -->
+          <text x="310" y="238" text-anchor="middle" class="rt-label">RE-ABSTRACT</text>
+          <rect x="225" y="244" width="170" height="32" rx="4" class="rt-box-tight"/>
+          <text x="310" y="265" text-anchor="middle" class="rt-text-tight">even, [4, 6]</text>
+        </svg>
+      </div>
+
+      <p>
+        The range tightened from [3, 6] to [4, 6] — the round-trip squeezed out
+        the slack. We got a strictly more precise abstract element.
+      </p>
+
+      <p>
+        See the round-trip in action on our Sudoku grids. Step through
+        S → α(S) → γ(α(S)) and watch the set grow:
+      </p>
+
+      <div id="galois-interactive" class="galois-interactive-container">
+        <div class="galois-controls">
+          <button id="galois-next" class="galois-btn">Next</button>
+          <button id="galois-reset" class="reset-btn">Reset</button>
+          <span id="galois-stage" class="galois-stage-label"></span>
+        </div>
+        <div class="galois-panels">
+          <div id="galois-left" class="galois-panel"></div>
+          <div id="galois-mid" class="galois-panel"></div>
+          <div id="galois-right" class="galois-panel"></div>
+        </div>
+      </div>
+
+      <script src="grids.js"></script>
+      <script src="step5.js"></script>
+
+      <p>
+        A <strong>Galois connection</strong> is the setting where for every
+        concrete state of affairs, there is always one <em>ideal</em> (most
+        precise) abstract representation — even though many non-ideal abstract
+        elements may represent the same concrete set.
+      </p>
+
+      <p>
+        Our earlier observation that meets are precise but joins are lossy in
+        the abstract lattice falls out of the math — it is a structural
+        consequence of the Galois connection, not a coincidence.
+      </p>
+
+      <div class="side-note">
+        This entire section dualizes. The dual of soundness is
+        <strong>completeness</strong> — we never add a solution candidate that
+        isn't an actual solution. In that setting, α and γ swap roles. This is
+        beyond the scope of this tutorial.
+      </div>
+
+      <div class="key-insight">
+        The intuitive notions of "abstraction" and "representation" can be
+        formalized by Galois connections.
+      </div>
+
+      <div class="side-note">
+        The use of Galois connections to soundly analyze the behavior of
+        computational systems through abstraction is called
+        <strong>abstract interpretation</strong>. It was invented by Patrick
+        and Radhia Cousot, originally for analyzing computer programs —
+        but as we've seen, the framework applies to any setting where we
+        want to approximate a complex system soundly.
+        See: P. Cousot &amp; R. Cousot,
+        <em>Abstract interpretation: a unified lattice model for static
+        analysis of programs by construction or approximation of
+        fixpoints</em>, POPL 1977.
+      </div>
+    </section>
+
+    <div class="nav-footer">
+      <a href="step4.html">← α and γ</a>
+      <a href="step6.html">Abstractions →</a>
+    </div>
+  </main>
+</body>
+</html>

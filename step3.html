@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abstract Interpretation — The Powerset Lattice</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="header">
+  <p class="site-title"><a href="index.html">An Abstract Interpretation Perspective on Logical Deduction</a></p>
+  <nav id="nav">
+    <a href="index.html">1</a>
+    <a href="step2.html">2</a>
+    <a href="step3.html" class="nav-current">3</a>
+    <a href="step4.html">4</a>
+    <a href="step5.html">5</a>
+    <a href="step6.html">6</a>
+    <a href="step7.html">7</a>
+  </nav>
+  </header>
+
+  <main>
+    <section class="step">
+      <h1>The Powerset Lattice</h1>
+
+      <p>
+        Our meets are precise — combining two sets of facts gives us exactly
+        their union. But joins lose information. When two states disagree on a
+        cell, the join simply forgets it:
+      </p>
+
+      <div class="operation-example">
+        <div class="operand">
+          <div class="facts">
+            <span class="facts-label"><var>a</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact unique-fact">2 at (1,2)</span>
+          </div>
+        </div>
+        <div class="operand">
+          <div class="facts">
+            <span class="facts-label"><var>b</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact unique-fact">4 at (1,2)</span>
+          </div>
+        </div>
+        <div class="operation-result">
+          <div class="facts">
+            <span class="facts-label"><var>a</var> ⊔ <var>b</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Both <var>a</var> and <var>b</var> know something about cell (1,2), but
+        since they disagree, the join throws it away entirely. We've lost the
+        fact that (1,2) is either 2 or 4 — not 1 or 3.
+      </p>
+
+      <p>
+        What data structure would avoid losing <em>any</em> information?
+      </p>
+
+      <p>
+        The simplest answer: track <strong>all possible complete grids</strong>.
+        A state of knowledge becomes a set of complete assignments
+        Loc → {1, 2, 3, 4}.
+      </p>
+
+      <p>
+        This is the <strong>powerset lattice</strong>
+        𝒫(Loc → N):
+      </p>
+
+      <dl class="definition">
+        <dt>Elements</dt>
+        <dd>Sets of complete grids</dd>
+        <dt>⊤</dt>
+        <dd>The set of all complete grids — we know nothing</dd>
+        <dt>⊥</dt>
+        <dd>∅ — inconsistent, no grid satisfies the constraints</dd>
+        <dt>Meet (⊓)</dt>
+        <dd>Intersection — combining knowledge narrows possibilities</dd>
+        <dt>Join (⊔)</dt>
+        <dd>Union — agreement keeps all possibilities from both</dd>
+      </dl>
+
+      <p>
+        Now joins are precise too. No information is lost.
+      </p>
+
+      <p>
+        Below we show the 288 grids that follow the rules of Sudoku. Fill in
+        a cell and watch the compatible set shrink. Hover a thumbnail to
+        preview it:
+      </p>
+
+      <div class="powerset-interactive">
+        <div class="powerset-left">
+          <table class="sudoku sudoku-interactive" id="powerset-grid">
+            <tr>
+              <td><input type="text" maxlength="1" data-row="0" data-col="0"></td>
+              <td><input type="text" maxlength="1" data-row="0" data-col="1"></td>
+              <td><input type="text" maxlength="1" data-row="0" data-col="2"></td>
+              <td><input type="text" maxlength="1" data-row="0" data-col="3"></td>
+            </tr>
+            <tr>
+              <td><input type="text" maxlength="1" data-row="1" data-col="0"></td>
+              <td><input type="text" maxlength="1" data-row="1" data-col="1"></td>
+              <td><input type="text" maxlength="1" data-row="1" data-col="2"></td>
+              <td><input type="text" maxlength="1" data-row="1" data-col="3"></td>
+            </tr>
+            <tr>
+              <td><input type="text" maxlength="1" data-row="2" data-col="0"></td>
+              <td><input type="text" maxlength="1" data-row="2" data-col="1"></td>
+              <td><input type="text" maxlength="1" data-row="2" data-col="2"></td>
+              <td><input type="text" maxlength="1" data-row="2" data-col="3"></td>
+            </tr>
+            <tr>
+              <td><input type="text" maxlength="1" data-row="3" data-col="0"></td>
+              <td><input type="text" maxlength="1" data-row="3" data-col="1"></td>
+              <td><input type="text" maxlength="1" data-row="3" data-col="2"></td>
+              <td><input type="text" maxlength="1" data-row="3" data-col="3"></td>
+            </tr>
+          </table>
+          <div class="powerset-count"><span id="grid-count">288</span> compatible grids</div>
+          <div class="powerset-invalid" id="invalid-count"></div>
+          <button id="powerset-reset" class="reset-btn">Reset</button>
+        </div>
+        <div class="powerset-right">
+          <div id="grid-pool"></div>
+        </div>
+      </div>
+
+      <script src="grids.js"></script>
+      <script src="step3.js"></script>
+
+      <div class="key-insight">
+        There is usually a most precise representation, but it is
+        computationally too expensive.
+      </div>
+    </section>
+
+    <div class="nav-footer">
+      <a href="step2.html">← Lattices</a>
+      <a href="step4.html">Abstraction →</a>
+    </div>
+  </main>
+</body>
+</html>

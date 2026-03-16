@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abstract Interpretation — α and γ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="header">
+  <p class="site-title"><a href="index.html">An Abstract Interpretation Perspective on Logical Deduction</a></p>
+  <nav id="nav">
+    <a href="index.html">1</a>
+    <a href="step2.html">2</a>
+    <a href="step3.html">3</a>
+    <a href="step4.html" class="nav-current">4</a>
+    <a href="step5.html">5</a>
+    <a href="step6.html">6</a>
+    <a href="step7.html">7</a>
+  </nav>
+  </header>
+
+  <main>
+    <section class="step">
+      <h1>Modeling Abstraction — α and γ</h1>
+
+      <p>
+        We now have two representations:
+      </p>
+
+      <ul class="lattice-items">
+        <li>
+          The <strong>concrete</strong> powerset lattice
+          𝒫(Loc → N) — precise but expensive.
+        </li>
+        <li>
+          The <strong>abstract</strong> lattice of partial assignments — cheap
+          but lossy.
+        </li>
+      </ul>
+
+      <p>
+        We connect them with a pair of functions:
+      </p>
+
+      <dl class="definition">
+        <dt>α (abstraction)</dt>
+        <dd>
+          Given a set of complete grids, extract the facts they all agree on.
+          We say α(S) <em>abstracts</em> S.
+        </dd>
+        <dt>γ (concretization)</dt>
+        <dd>
+          Given a partial assignment, return every complete grid compatible
+          with it. We say γ(a) is what a <em>represents</em>.
+        </dd>
+      </dl>
+
+      <div class="galois-diagram">
+        <span class="galois-label">concrete</span>
+        <svg class="galois-svg" viewBox="0 0 100 54" width="100" height="54">
+          <line x1="90" y1="12" x2="10" y2="12" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M10,12 L18,6" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <text x="50" y="8" text-anchor="middle" font-size="11" font-style="italic" fill="currentColor">γ</text>
+          <line x1="10" y1="42" x2="90" y2="42" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M90,42 L82,48" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          <text x="50" y="54" text-anchor="middle" font-size="11" font-style="italic" fill="currentColor">α</text>
+        </svg>
+        <span class="galois-label">abstract</span>
+      </div>
+
+      <p>
+        We use these barbed half-arrows to denote the relationship between
+        the two lattices — a notation we'll return to.
+      </p>
+
+      <p>Formally, for our Sudoku domain:</p>
+
+      <div class="math-block">
+        α(S) = { (loc, n) | ∀ grid ∈ S : grid(loc) = n }
+      </div>
+
+      <p>
+        That is, α extracts every cell assignment that <em>all</em> grids in
+        the set agree on.
+      </p>
+
+      <div class="math-block">
+        γ(a) = { grid | ∀ (loc, n) ∈ a : grid(loc) = n }
+      </div>
+
+      <p>
+        And γ returns every complete grid that is compatible with the partial
+        assignment.
+      </p>
+
+      <p>For example, take two complete grids that agree on their upper half:</p>
+
+      <div class="operation-example">
+        <div class="operand">
+          <div class="example-grids-inline">
+            <span class="facts-label">S = {</span>
+            <table class="sudoku sudoku-mini">
+              <tr><td class="agree">1</td><td class="agree">2</td><td class="agree">3</td><td class="agree">4</td></tr>
+              <tr><td class="agree">3</td><td class="agree">4</td><td class="agree">1</td><td class="agree">2</td></tr>
+              <tr><td class="disagree">2</td><td class="disagree">1</td><td class="disagree">4</td><td class="disagree">3</td></tr>
+              <tr><td class="disagree">4</td><td class="disagree">3</td><td class="disagree">2</td><td class="disagree">1</td></tr>
+            </table>
+            <span class="comma">,</span>
+            <table class="sudoku sudoku-mini">
+              <tr><td class="agree">1</td><td class="agree">2</td><td class="agree">3</td><td class="agree">4</td></tr>
+              <tr><td class="agree">3</td><td class="agree">4</td><td class="agree">1</td><td class="agree">2</td></tr>
+              <tr><td class="disagree">4</td><td class="disagree">3</td><td class="disagree">2</td><td class="disagree">1</td></tr>
+              <tr><td class="disagree">2</td><td class="disagree">1</td><td class="disagree">4</td><td class="disagree">3</td></tr>
+            </table>
+            <span class="facts-label">}</span>
+          </div>
+        </div>
+        <div class="operation-result">
+          <div class="facts">
+            <span class="facts-label">α(S) =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact shared-fact">2 at (1,2)</span>
+            <span class="fact shared-fact">3 at (1,3)</span>
+            <span class="fact shared-fact">4 at (1,4)</span>
+            <span class="fact shared-fact">3 at (2,1)</span>
+            <span class="fact shared-fact">4 at (2,2)</span>
+            <span class="fact shared-fact">1 at (2,3)</span>
+            <span class="fact shared-fact">2 at (2,4)</span>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        The two grids agree on rows 1 and 2 but differ on rows 3 and 4 — so
+        α keeps only the first eight facts. Applying γ(α(S)) would return all
+        4<sup>8</sup> = 65,536 complete grids that match those eight cells —
+        including invalid ones.
+      </p>
+
+      <div class="key-insight">
+        We can formally connect a precise and an approximate representation via
+        a pair of functions: α abstracts, γ tells us what an abstract element
+        represents.
+      </div>
+    </section>
+
+    <div class="nav-footer">
+      <a href="step3.html">← The Powerset Lattice</a>
+      <a href="step5.html">Galois Connections →</a>
+    </div>
+  </main>
+</body>
+</html>

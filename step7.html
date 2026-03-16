@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abstract Interpretation — Deduction</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="header">
+  <p class="site-title"><a href="index.html">An Abstract Interpretation Perspective on Logical Deduction</a></p>
+  <nav id="nav">
+    <a href="index.html">1</a>
+    <a href="step2.html">2</a>
+    <a href="step3.html">3</a>
+    <a href="step4.html">4</a>
+    <a href="step5.html">5</a>
+    <a href="step6.html">6</a>
+    <a href="step7.html" class="nav-current">7</a>
+  </nav>
+  </header>
+
+  <main>
+    <section class="step">
+      <h1>Deduction as Filtering</h1>
+
+      <p>
+        We have lattices, abstractions, and Galois connections. Now we can
+        talk about what it means to <em>reason</em> within these structures.
+      </p>
+
+      <p>
+        Think of logical deduction as <strong>filtering out invalid
+        candidates</strong>. On the powerset lattice, a deduction function
+        takes a set of possible grids and removes some that violate a
+        constraint — leaving a smaller, more informative set.
+      </p>
+
+      <p>
+        Deduction functions can vary in strength. What properties should any
+        reasonable deduction function have?
+      </p>
+
+      <dl class="definition">
+        <dt>Monotone</dt>
+        <dd>
+          Fewer candidates in, fewer candidates out. Deduction shouldn't
+          somehow produce more results from less input.
+        </dd>
+        <dt>Decreasing</dt>
+        <dd>
+          Deduction only removes candidates, never adds them. The result is
+          always ⊑ the input — we only gain information, never lose it.
+        </dd>
+      </dl>
+
+      <p>
+        The <strong>best</strong> deduction function on the powerset lattice
+        filters out every grid that violates any Sudoku constraint — leaving
+        exactly the valid solutions. This ideal deduction additionally is:
+      </p>
+
+      <dl class="definition">
+        <dt>Idempotent</dt>
+        <dd>
+          Applying it twice gives the same result as once. Once invalid
+          candidates are gone, they're gone.
+        </dd>
+      </dl>
+
+      <p>
+        A function that is monotone, decreasing, and idempotent is called a
+        <strong>closure operator</strong> (specifically, a lower closure).
+      </p>
+
+      <h2 style="font-size:1.15rem;margin-top:2.5rem;margin-bottom:1rem;">Sound abstract deduction</h2>
+
+      <p>
+        The ideal deduction operates on the expensive concrete lattice. But
+        we've seen that we can work on cheaper abstract lattices instead.
+        Can we define deduction there and still trust the results?
+      </p>
+
+      <p>
+        An abstract deduction operator <var>d</var> is <strong>sound</strong>
+        if it never concludes anything that the ideal concrete deduction
+        <var>d</var>* wouldn't:
+      </p>
+
+      <div class="math-block">
+        α ∘ <var>d</var> ∘ γ &nbsp;⊑&nbsp; <var>d</var>*
+      </div>
+
+      <p>
+        In other words: take an abstract state, concretize it, apply
+        <var>d</var>, then abstract back — the result should be at least as
+        precise as what the ideal deduction gives. Whatever <var>d</var>
+        concludes, <var>d</var>* agrees.
+      </p>
+
+      <p>
+        Below is the lattice of partial solutions for a puzzle with 7
+        unknown cells — 128 nodes. Each node is a mini Sudoku grid — colored cells are
+        known, white cells are unknown. The solution sits at the bottom, the
+        starting givens at the top.
+      </p>
+
+      <p>
+        Toggle deduction rules to see where each node maps. With no rules
+        enabled, every node maps to itself (self-loops). As you enable rules,
+        the arrows show how deduction pushes each state downward toward the
+        solution:
+      </p>
+
+      <div id="deduction-controls" class="deduction-controls"></div>
+
+      <div class="deduction-lattice-container">
+        <svg id="deduction-lattice"></svg>
+      </div>
+
+      <script src="step7.js"></script>
+
+      <div class="key-insight">
+        Deduction is filtering out invalid candidates. We can define sound
+        deduction on cheap abstract lattices and trust the results — the
+        Galois connection guarantees it.
+      </div>
+
+    </section>
+
+    <div class="to-be-continued">To be continued...</div>
+
+    <div class="nav-footer">
+      <a href="step6.html">← Abstractions</a>
+      <span></span>
+    </div>
+  </main>
+</body>
+</html>

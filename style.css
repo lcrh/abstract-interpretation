@@ -1,0 +1,1089 @@
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #fafaf8;
+  --fg: #1a1a1a;
+  --muted: #6b6b6b;
+  --accent: #2d5a9e;
+  --border: #ddd;
+  --insight-bg: #f0f4fa;
+  --insight-border: #b3c8e8;
+  --fact-bg: #eef1f5;
+  --given-bg: #e8e8e4;
+  --font-body: 'Georgia', 'Times New Roman', serif;
+  --font-mono: 'Menlo', 'Consolas', monospace;
+  --font-math: 'Cambria Math', 'Latin Modern Math', 'Georgia', serif;
+  --max-width: 640px;
+}
+
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.7;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- Header (title + nav) --- */
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+
+.site-title {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  padding: 0.5rem 0 0;
+  margin: 0;
+}
+
+.site-title a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.site-title a:hover {
+  color: var(--fg);
+}
+
+/* --- Navigation --- */
+#nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.4rem 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+#nav a {
+  color: var(--muted);
+  text-decoration: none;
+  width: 1.8rem;
+  height: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.2s, background 0.2s;
+}
+
+#nav a:hover {
+  color: var(--fg);
+  background: var(--fact-bg);
+}
+
+#nav a.nav-current {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* --- Main content --- */
+main {
+  max-width: var(--max-width);
+  width: 100%;
+  padding: 6rem 1.5rem 4rem;
+}
+
+.step { }
+
+h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+p {
+  margin-bottom: 1.4rem;
+}
+
+var {
+  font-family: var(--font-math);
+  font-style: italic;
+}
+
+strong {
+  font-weight: 600;
+}
+
+/* --- Sudoku grid --- */
+.sudoku-example {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.sudoku {
+  border-collapse: collapse;
+}
+
+.sudoku td {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  vertical-align: middle;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.sudoku td.given {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.sudoku td.deduced {
+  color: #1a7a3a;
+  font-weight: 600;
+  background: #e6f4ea;
+}
+
+/* 2×2 box borders */
+.sudoku tr:nth-child(2) td { border-bottom-width: 2px; border-bottom-color: var(--fg); }
+.sudoku td:nth-child(2) { border-right-width: 2px; border-right-color: var(--fg); }
+.sudoku tr:first-child td { border-top-width: 2px; border-top-color: var(--fg); }
+.sudoku tr:last-child td { border-bottom-width: 2px; border-bottom-color: var(--fg); }
+.sudoku td:first-child { border-left-width: 2px; border-left-color: var(--fg); }
+.sudoku td:last-child { border-right-width: 2px; border-right-color: var(--fg); }
+
+/* --- Fact pills --- */
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  justify-content: center;
+}
+
+.facts-label {
+  font-family: var(--font-math);
+  font-size: 1rem;
+  color: var(--fg);
+  margin-right: 0.2rem;
+}
+
+.fact {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  background: var(--fact-bg);
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  color: var(--fg);
+}
+
+.fact.deduced-fact {
+  background: #e6f4ea;
+  color: #1a7a3a;
+  font-weight: 600;
+}
+
+/* --- Lattice interactive --- */
+.lattice-interactive {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1.2rem 0;
+}
+
+.lattice-interactive svg {
+  display: block;
+}
+
+.lattice-edge {
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.lattice-edge.path-highlight {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-opacity: 0.4;
+}
+
+.lattice-node circle {
+  fill: var(--bg);
+  stroke: var(--border);
+  stroke-width: 1.5;
+  transition: fill 0.15s, stroke 0.15s;
+}
+
+.lattice-node text {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--fg);
+  pointer-events: none;
+}
+
+.lattice-node:hover circle {
+  stroke: var(--accent);
+}
+
+.lattice-node.selected circle {
+  fill: #e8eef8;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.lattice-node.is-meet circle {
+  fill: #e6f4ea;
+  stroke: #1a7a3a;
+  stroke-width: 2.5;
+}
+
+.lattice-node.is-join circle {
+  fill: #fef3e0;
+  stroke: #c67700;
+  stroke-width: 2.5;
+}
+
+.lattice-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.lattice-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-selected { background: #e8eef8; border: 1.5px solid var(--accent); }
+.legend-meet { background: #e6f4ea; border: 1.5px solid #1a7a3a; }
+.legend-join { background: #fef3e0; border: 1.5px solid #c67700; }
+
+.lattice-result-line {
+  font-family: var(--font-math);
+  font-size: 0.9rem;
+}
+
+.lattice-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* --- Operation examples (join/meet) --- */
+.operation-example {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 1.2rem 0;
+}
+
+.operand {
+  width: 100%;
+}
+
+.operation-result {
+  width: 100%;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+.fact.shared-fact {
+  background: #e8eef8;
+  color: var(--accent);
+}
+
+.fact.unique-fact {
+  background: var(--fact-bg);
+  color: var(--muted);
+}
+
+/* --- Chain diagram --- */
+.chain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 2rem 0;
+  font-family: var(--font-math);
+  font-size: 1.1rem;
+}
+
+.chain-node {
+  padding: 0.3rem 0;
+}
+
+.chain-node-a0 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-math);
+}
+
+.chain-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  justify-content: center;
+  max-width: 14rem;
+}
+
+.chain-node-expanded {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.chain-label {
+  font-family: var(--font-math);
+  font-size: 0.95rem;
+}
+
+.chain-edge {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* --- Interactive container --- */
+.interactive-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2.5rem;
+  margin: 2rem 0;
+}
+
+.interactive-grid-side {
+  flex-shrink: 0;
+}
+
+.interactive-chain-side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-math);
+  font-size: 1.1rem;
+  height: 10rem;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+.interactive-chain-side::-webkit-scrollbar {
+  display: none;
+}
+
+.interactive-chain-side::before {
+  content: "";
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  width: 100%;
+  height: 3rem;
+  background: linear-gradient(to bottom, var(--bg), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Interactive sudoku inputs */
+.sudoku-interactive input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--fg);
+  outline: none;
+  caret-color: var(--accent);
+}
+
+.sudoku-interactive input:focus {
+  background: #f5f5f0;
+}
+
+.sudoku-interactive input.correct {
+  color: #1a7a3a;
+  font-weight: 600;
+  background: #e6f4ea;
+}
+
+.sudoku-interactive input.wrong {
+  background: #fde8e8;
+  color: #c53030;
+}
+
+.sudoku-interactive input:disabled {
+  cursor: default;
+}
+
+/* --- Interactive controls --- */
+.interactive-controls {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.reset-btn {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.reset-btn:hover {
+  color: var(--fg);
+  border-color: var(--fg);
+}
+
+/* --- Incomparable pair --- */
+.incomparable {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.incomparable-side {
+  display: flex;
+  align-items: center;
+}
+
+.incomparable-gap {
+  font-family: var(--font-math);
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+
+/* --- Key insight box --- */
+.key-insight {
+  margin: 2.5rem 0;
+  padding: 1.2rem 1.5rem;
+  background: var(--insight-bg);
+  border-left: 3px solid var(--insight-border);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* --- Next page link --- */
+.next-link {
+  display: block;
+  text-align: right;
+  margin-top: 4rem;
+  padding: 1rem 0;
+  font-size: 1rem;
+  color: var(--accent);
+  text-decoration: none;
+  border-top: 1px solid var(--border);
+  transition: color 0.2s;
+}
+
+.next-link:hover {
+  color: var(--fg);
+}
+
+/* --- Prev link --- */
+.prev-link {
+  display: block;
+  text-align: left;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.prev-link:hover {
+  color: var(--fg);
+}
+
+/* --- Navigation footer (prev + next together) --- */
+.nav-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.nav-footer a {
+  font-size: 1rem;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-footer a:hover {
+  color: var(--fg);
+}
+
+/* --- Math blocks --- */
+.math-block {
+  text-align: center;
+  margin: 1.5rem 0;
+  font-family: var(--font-math);
+  font-size: 1.1rem;
+}
+
+/* --- Mini sudoku grid cell highlights --- */
+.sudoku td.agree {
+  color: var(--fg);
+  font-weight: 600;
+  background: #e8eef8;
+}
+
+.sudoku td.disagree {
+  color: var(--muted);
+}
+
+/* --- Mini sudoku grids --- */
+.sudoku-mini td {
+  width: 1.8rem;
+  height: 1.8rem;
+  font-size: 0.8rem;
+}
+
+.example-grids-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.example-grids-inline .comma {
+  font-family: var(--font-math);
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+/* --- Galois connection diagram --- */
+.galois-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 2rem 0;
+  font-family: var(--font-math);
+  font-size: 1.1rem;
+}
+
+.galois-label {
+  color: var(--fg);
+}
+
+.galois-svg {
+  color: var(--muted);
+  font-family: var(--font-math);
+}
+
+/* --- Definition lists --- */
+.definition {
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border);
+}
+
+.definition dt {
+  font-weight: 600;
+  margin-top: 0.8rem;
+}
+
+.definition dt:first-child {
+  margin-top: 0;
+}
+
+.definition dd {
+  margin-left: 0;
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* --- Lattice items list --- */
+.lattice-items {
+  margin: 1.5rem 0;
+}
+
+.lattice-items li {
+  margin-bottom: 0.8rem;
+  margin-left: 1.2rem;
+}
+
+/* --- Hierarchy diagram --- */
+.hierarchy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2.5rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.hierarchy-node {
+  padding: 0.5rem 1.2rem;
+  background: var(--fact-bg);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.hierarchy-arrow {
+  color: var(--muted);
+  font-family: var(--font-math);
+  font-size: 1rem;
+}
+
+.hierarchy-with-label {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2.5rem 0;
+}
+
+.hierarchy-side-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  padding: 0.5rem 0;
+}
+
+.hierarchy-side-arrow {
+  font-size: 1.2rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* --- Round-trip diagram (SVG) --- */
+.round-trip-svg-container {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.round-trip-svg .rt-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+.round-trip-svg .rt-box {
+  fill: var(--fact-bg);
+  stroke: none;
+}
+
+.round-trip-svg .rt-box-tight {
+  fill: #e6f4ea;
+  stroke: none;
+}
+
+.round-trip-svg .rt-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  fill: var(--fg);
+}
+
+.round-trip-svg .rt-text-tight {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  fill: #1a7a3a;
+  font-weight: 600;
+}
+
+.round-trip-svg .rt-arrow-label {
+  font-family: var(--font-math);
+  font-size: 14px;
+  font-style: italic;
+  fill: var(--muted);
+}
+
+/* --- Galois interactive (step 5) --- */
+.galois-interactive-container {
+  margin: 1.5rem 0;
+}
+
+.galois-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.galois-select {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.galois-btn {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--bg);
+  background: var(--accent);
+  border: none;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.galois-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.galois-stage-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.galois-panels {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.galois-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 6rem;
+}
+
+.galois-panel-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+
+.galois-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  max-width: 12rem;
+}
+
+.thumbnail-extra {
+  outline: 2px solid #e8853d;
+  outline-offset: -1px;
+}
+
+.galois-extra-note {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #e8853d;
+  font-weight: 600;
+  margin-top: 0.3rem;
+}
+
+.galois-invalid-note {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.sudoku-mini.grid-highlight {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sudoku td.preview-cell {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* --- Side note --- */
+.side-note {
+  margin: 1.5rem 0;
+  padding: 0.8rem 1.2rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+/* --- Powerset interactive --- */
+.powerset-interactive {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.powerset-left {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.powerset-count {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.powerset-invalid {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.powerset-right {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.powerset-right.overflowing::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3rem;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  pointer-events: none;
+  z-index: 1;
+}
+
+#grid-pool {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 3px;
+  justify-content: flex-start;
+  max-height: 24rem;
+  overflow: hidden;
+}
+
+
+/* Thumbnail grids */
+.thumbnail {
+  border-collapse: collapse;
+  transition: width 0.3s;
+}
+
+.thumbnail {
+  cursor: pointer;
+}
+
+.thumbnail td {
+  width: 6px; height: 6px; font-size: 0;
+  padding: 0; border: none;
+}
+
+.thumbnail td[data-d="1"] { background: #2488cf; }
+.thumbnail td[data-d="2"] { background: #f57c20; }
+.thumbnail td[data-d="3"] { background: #3dab4a; }
+.thumbnail td[data-d="4"] { background: #b44ec9; }
+
+.thumbnail:not(.incompatible):hover {
+  outline: 1.5px solid var(--fg);
+}
+
+.thumbnail.incompatible {
+  opacity: 0.2;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* Preview values shown on hover */
+.sudoku-interactive input.preview {
+  color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* --- Hierarchy interactive (step 6) --- */
+.hierarchy-interactive {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.hierarchy-spacer {
+  height: 2rem;
+}
+
+.hierarchy-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 8rem;
+}
+
+.hierarchy-col-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.hierarchy-thumbs {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.set-brace {
+  font-family: var(--font-math);
+  font-size: 1.4rem;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.set-comma {
+  font-family: var(--font-math);
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.hierarchy-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hierarchy-hint {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.sudoku td.empty-cell {
+  background: var(--fact-bg);
+  opacity: 0.4;
+}
+
+.sudoku td.pencil-cell {
+  font-size: 0.55rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+}
+
+/* --- Deduction lattice (step 7) --- */
+.deduction-lattice-container {
+  margin: 2rem 0;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 1200px;
+}
+
+.deduction-lattice-container svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lattice-level-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--muted);
+}
+
+.deduction-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.deduction-rule-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--fg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.deduction-rule-label input[type="checkbox"] {
+  accent-color: #e05050;
+}
+
+/* --- To be continued --- */
+.to-be-continued {
+  text-align: center;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin: 3rem 0 1rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  html { font-size: 16px; }
+  main { padding: 4.5rem 1rem 3rem; }
+  .sudoku td { width: 2.5rem; height: 2.5rem; font-size: 1rem; }
+}

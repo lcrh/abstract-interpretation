@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abstract Interpretation — Lattices</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="header">
+  <p class="site-title"><a href="index.html">An Abstract Interpretation Perspective on Logical Deduction</a></p>
+  <nav id="nav">
+    <a href="index.html">1</a>
+    <a href="step2.html" class="nav-current">2</a>
+    <a href="step3.html">3</a>
+    <a href="step4.html">4</a>
+    <a href="step5.html">5</a>
+    <a href="step6.html">6</a>
+    <a href="step7.html">7</a>
+  </nav>
+  </header>
+
+  <main>
+    <section class="step">
+      <h1>From Partial Orders to Lattices</h1>
+
+      <p>
+        Given two states of knowledge, we can ask: what do they
+        <em>agree</em> on? In the language of partial orders: what is the
+        <em>most informative</em> state that is <em>less precise than both</em>?
+        Only the facts they share survive. This is called the
+        <strong>least upper bound</strong> (lub), or <strong>join</strong>,
+        written <var>a</var> ⊔ <var>b</var>.
+      </p>
+
+      <div class="operation-example">
+        <div class="operand">
+          <div class="facts">
+            <span class="facts-label"><var>a</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact shared-fact">3 at (1,3)</span>
+            <span class="fact unique-fact">4 at (2,2)</span>
+          </div>
+        </div>
+        <div class="operand">
+          <div class="facts">
+            <span class="facts-label"><var>b</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact shared-fact">3 at (1,3)</span>
+            <span class="fact unique-fact">2 at (3,3)</span>
+          </div>
+        </div>
+        <div class="operation-result">
+          <div class="facts">
+            <span class="facts-label"><var>a</var> ⊔ <var>b</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact shared-fact">3 at (1,3)</span>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Now turn it around. Given two separate sets of facts, what does it
+        mean to <em>combine</em> them? In the language of partial orders:
+        what is the <em>least precise</em> state that is <em>more precise
+        than both</em>? We keep everything from both. This is called the
+        <strong>greatest lower bound</strong> (glb), or <strong>meet</strong>,
+        written <var>a</var> ⊓ <var>b</var>.
+      </p>
+
+      <div class="operation-example">
+        <div class="operand">
+          <div class="facts">
+            <span class="facts-label"><var>a</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact unique-fact">4 at (2,2)</span>
+          </div>
+        </div>
+        <div class="operand">
+          <div class="facts">
+            <span class="facts-label"><var>b</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact unique-fact">2 at (3,3)</span>
+          </div>
+        </div>
+        <div class="operation-result">
+          <div class="facts">
+            <span class="facts-label"><var>a</var> ⊓ <var>b</var> =</span>
+            <span class="fact shared-fact">1 at (1,1)</span>
+            <span class="fact unique-fact">4 at (2,2)</span>
+            <span class="fact unique-fact">2 at (3,3)</span>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        A partial order equipped with both meet and join is called a
+        <strong>lattice</strong>.
+      </p>
+
+      <p>
+        Here is a fragment of the full lattice, built from just three facts —
+        A = "1 at (1,1)", B = "3 at (1,3)", C = "4 at (2,2)". The real
+        lattice is much larger, but this slice is enough to see the structure.
+        Click any two elements to see their meet and join.
+      </p>
+
+      <div class="lattice-interactive">
+        <svg id="lattice-svg" viewBox="0 0 360 300" width="360" height="300"></svg>
+        <div class="lattice-results">
+          <div class="lattice-legend">
+            <span class="legend-dot legend-selected"></span> selected &nbsp;
+            <span class="legend-dot legend-meet"></span> meet &nbsp;
+            <span class="legend-dot legend-join"></span> join
+          </div>
+          <div id="meet-result" class="lattice-result-line"></div>
+          <div id="join-result" class="lattice-result-line"></div>
+          <div id="selection-hint" class="lattice-hint">Click two elements to see their meet and join.</div>
+          <button id="lattice-reset" class="reset-btn">Reset</button>
+        </div>
+      </div>
+
+      <script src="step2.js"></script>
+
+      <p>
+        But combining facts can produce contradictions — "1 at (1,1)" combined
+        with "2 at (1,1)". We add a special element <strong>⊥</strong> (bottom)
+        to represent inconsistency. It sits below everything.
+      </p>
+
+      <p>
+        And we add <strong>⊤</strong> (top) for the state of knowing nothing at
+        all. It sits above everything.
+      </p>
+
+      <div class="chain">
+        <div class="chain-node">⊤ &nbsp;<span style="color:var(--muted);font-size:0.85rem">no knowledge</span></div>
+        <div class="chain-edge">⊑</div>
+        <div class="chain-node">…</div>
+        <div class="chain-edge">⊑</div>
+        <div class="chain-node">⊥ &nbsp;<span style="color:var(--muted);font-size:0.85rem">inconsistent</span></div>
+      </div>
+
+      <div class="key-insight">
+        Meet is a little like saying "both are true" and join is like "at least
+        one is true" — approximate versions of <em>and</em> and <em>or</em>.
+        A lattice is a representation where we have these approximate "and"
+        and "or".
+      </div>
+    </section>
+
+    <div class="nav-footer">
+      <a href="index.html">← Partial Orders</a>
+      <a href="step3.html">The Powerset Lattice →</a>
+    </div>
+  </main>
+</body>
+</html>
